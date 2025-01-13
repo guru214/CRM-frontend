@@ -1,0 +1,72 @@
+/* EmailVerification.css */
+
+.email-verification-container {
+    text-align: center;
+    margin-top: 50px;
+    font-family: "Arial", sans-serif;
+    color: #fff;
+    padding: 20px;
+  }
+  
+  .email-verification-box {
+    background-color: #000000;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    margin: 0 auto;
+    color: #ffd700;
+  }
+  
+  .email-verification-title {
+    color: #ffd700;
+    margin-bottom: 20px;
+  }
+  
+  .email-verification-button {
+    padding: 12px 25px;
+    font-size: 16px;
+    background-color: #ffd700;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .email-verification-status {
+    font-size: 14px;
+    color: #fff;
+  }
+  
+  .email-verification-success {
+    font-size: 14px;
+    color: green;
+    font-weight: bold;
+  }
+  
+  .email-verification-error {
+    font-size: 14px;
+    color: red;
+    font-weight: bold;
+  }
+  
+  .email-verification-footer {
+    margin-top: 20px;
+  }
+  
+  .email-verification-footer p {
+    font-size: 14px;
+    color: #ffd700;
+  }
+  
+  .resend-link {
+    color: #ffd700;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .resend-link:hover {
+    text-decoration: underline;
+  }
+  

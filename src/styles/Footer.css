@@ -1,0 +1,46 @@
+.footer {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .footer.dark {
+    background-color: black;
+    color: gold;
+  }
+  
+  .footer.light {
+    background-color: white;
+    color: black;
+  }
+  
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .footer-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.3s;
+  }
+  
+  .footer-logo span {
+    color: gold;
+  }
+  
+  .footer-logo:hover {
+    transform: scale(1.1);
+    color: gold;
+  }
+  

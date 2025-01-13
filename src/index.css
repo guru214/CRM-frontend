@@ -1,0 +1,151 @@
+
+
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+.sidebar {
+  border-right: 1px solid #dee2e6;
+}
+
+table th, table td {
+  text-align: center;
+}
+
+/* Sidebar css */
+/* Default Sidebar Styling */
+.sidebar-container {
+  width: 80px; /* Fixed width for the sidebar */
+  background: #f8f9fa; /* Background color */
+  border-right: 1px solid #ddd; /* Optional border */
+  height: 100vh; /* Full viewport height */
+
+  position: fixed; /* Keep it fixed */
+  
+}
+
+/* Main content styling */
+.main-content {
+  margin-left: 80px; /* Match the sidebar width */
+  padding: 20px; /* Add padding for spacing */
+  overflow: auto; /* Ensure scrolling for long content */
+}
+
+
+
+.sidebar-item{
+  position: relative; /* Necessary for child (details box) positioning */
+  height: 50px;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  height: "50px";
+ border-bottom: "1px solid #e0e0e0";
+}
+
+.sidebar-item:hover {
+  background-color: #e9ecef; /* Light gray for hover effect */
+  
+}
+
+.sidebar-item:active {
+ 
+}
+
+/* Details Container */
+.details-container {
+  min-width: 500px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .sidebar-container {
+   
+    background-color: #f8f9fa; /* Background color */
+    border-top: 1px solid #e0e0e0; /* Border on top */
+    border-right: none; /* Remove right border */
+    position: fixed; /* Fixed at the bottom */
+    bottom: 0;
+    left: 0;
+    flex-direction: row; /* Horizontal layout */
+    justify-content: space-around; /* Spread icons evenly */
+    align-items: center; /* Center icons vertically */
+    padding: 0;
+  }
+
+  .sidebar-item {
+    height: 100%; /* Full height of the downbar */
+    border-bottom: none; /* Remove item dividers */
+  }
+}
+
+/* General card container style */
+.overlay-container {
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  width: 250px;
+}
+
+/* Header section styles */
+.overlay-container img {
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+.overlay-container h5 {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.overlay-container p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Icons and text layout */
+.overlay-icons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-bottom: 15px;
+}
+
+.overlay-icons .text-center {
+  margin-top: 10px;
+  width: 45%;
+}
+
+.overlay-icons .text-center p {
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+/* Buttons (Theme Toggle and Logout) */
+.overlay-container .d-flex {
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.overlay-container .d-flex p {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.overlay-container .d-flex button {
+  padding: 5px 10px;
+}
+
+.overlay-container .logout-btn {
+  width: 100%;
+  text-align: center;
+}
+
+.overlay-container .logout-btn button {
+  width: 100%;
+}

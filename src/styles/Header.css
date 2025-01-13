@@ -1,0 +1,270 @@
+/* General styles */
+.header {
+    padding: 10px 20px;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+  }
+  
+  .dark {
+    background-color: black;
+    color: gold;
+  }
+  
+  .light {
+    background-color: white;
+    color: black;
+  }
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .logo {
+    font-size: 1.8rem;
+    margin-left: 60px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .logo:hover {
+    transform: scale(1.1);
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: inherit;
+    font-size: 1rem;
+    position: relative;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: gold;
+    transition: width 0.3s ease;
+  }
+  
+  .nav-links a:hover::after,
+  .nav-links a.active::after {
+    width: 100%;
+  }
+  
+  .nav-links.open {
+    display: block;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .time {
+    font-size: 1.2rem;
+  }
+  
+  .profile-menu {
+    position: relative;
+  }
+  
+  .profile-button {
+    background-color: black;
+    color: gold;
+    border: none;
+    font-size: 25px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .profile-button:hover {
+    background-color: black;
+  }
+
+  /* Center-aligned content */
+  .dropdown .text-center {
+    text-align: center;
+  }
+  
+  /* Logo styling */
+  .dropdown img {
+    width: 120px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 0.5px solid gold;
+  }
+  
+  /* User details */
+  .dropdown h5 {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: gold;
+  }
+  
+  .dropdown p {
+    color: #ffffff;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .dropdown p strong {
+    color: gold;
+  }
+  
+  /* Action buttons */
+  .dropdown .d-flex div {
+    margin: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  
+  .dropdown .d-flex div:hover {
+    transform: scale(1.1);
+    color: #4caf50;
+  }
+  
+  /* Icons */
+  .dropdown .d-flex div svg {
+    margin-bottom: 5px;
+  }
+  
+  /* Button styling */
+  .dropdown .text-center button {
+    background-color: #ff4d4f;
+    border: none;
+    color: white;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .dropdown .text-center button:hover {
+    background-color: #e63946;
+  }
+  
+  /* Optional theme toggle (commented out) */
+  .dropdown .theme-toggle {
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dropdown .theme-toggle p {
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .dropdown .theme-toggle button {
+    font-size: 12px;
+    margin-left: 10px;
+    padding: 4px 8px;
+  }
+  
+  .dropdown {
+    position: absolute;
+    width: 300px;
+    margin:15px;
+    top: 50px;
+    right: 0;
+    background: black;
+    color: gold;
+    border: 1px solid gold;
+    border-radius: 5px;
+    padding: 10px;    
+  }
+  
+  .dropdown-main{
+    padding-top: 20px;
+  }
+  .dropdown a {
+    display: block;
+    padding: 8px;
+    text-decoration: none;
+    color: gold;
+  }
+  
+  .dropdown a:hover {
+    background-color: gold;
+    color: black;
+  }
+  
+  .theme-toggle {
+    background-color: gold;
+    color: black;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  
+  .theme-toggle:hover {
+    background-color: #d4af37;
+  }
+  
+  .menu-toggle {
+    display: none;
+    background-color: gold;
+    color: black;
+    border: none;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .menu-toggle:hover {
+    background-color: #d4af37;
+  }
+  
+  /* Mobile styles */
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none;
+    }
+  
+    .menu-toggle {
+      display: block;
+    }
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo-image {
+    height: 40px; /* Adjust as needed */
+    transition: transform 0.3s ease;
+  }
+  
+  .logo-image:hover {
+    transform: scale(1.1);
+  }
+  
