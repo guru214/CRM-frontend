@@ -14,6 +14,7 @@ const UserReturnManagement = () => {
   const [returnPercentage, setReturnPercentage] = useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [investments, setInvestments] = useState([]);
 
   useEffect(() => {
     const getUsersAndReturns = async () => {
@@ -46,6 +47,35 @@ const UserReturnManagement = () => {
     }
   }, [selectedUser]);
 
+  useEffect(() => {
+    const fetchUsersAndInvestments = async () => {
+      try {
+        // Fetch users
+        const usersResponse = await instance.get("/api/v1/auth/getUsersAndAdmins");
+        setUsers(usersResponse.data);
+  
+        // Fetch investments
+        const investmentsResponse = await instance.get("/api/v1/deposit/getAllApprovedDepositReq");
+        // console.log(investmentsResponse.data)
+        setInvestments(investmentsResponse.data.userInvestments);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast.error("Failed to fetch user or investment data.");
+      }
+    };
+  
+    fetchUsersAndInvestments();
+  }, []);
+
+  
+  // Get total investment for a user by AccountID
+  const getTotalInvestment = (accountID) => {
+    const userInvestment = investments.find(
+      (investment) => investment.AccountID === accountID
+    );
+    return userInvestment ? userInvestment.total_investment : 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -76,7 +106,7 @@ const UserReturnManagement = () => {
             <th>Email</th>
             <th>FullName</th>
             <th>Is Verified</th>
-            <th>Balance</th>
+            <th>Total Investment</th>
             <th>Role</th>
             <th>Actions</th>
           </tr>
@@ -89,7 +119,7 @@ const UserReturnManagement = () => {
                 <td>{user.Email}</td>
                 <td>{user.FullName}</td>
                 <td>{user.isEmailVerified ? 'Verified' : 'Not Verified'}</td>
-                <td>₹{user.amount}</td>
+                <td>₹{getTotalInvestment(user.AccountID)}</td>
                 <td>{user.Role}</td>
                 <td>
                   <Button variant="primary" onClick={() => setSelectedUser(user)}>
