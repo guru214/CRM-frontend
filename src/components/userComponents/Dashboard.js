@@ -17,6 +17,7 @@ const Dashboard = () => {
         amount: "",
     });
     const [totalReturns, setTotalReturns] = useState(null); // State for total returns
+    const [totalInvestment, setTotalInvestment] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -26,7 +27,6 @@ const Dashboard = () => {
                 setuserData({
                     FullName: response.data.FullName,
                     AccountID: response.data.AccountID,
-                    amount: response.data.amount,
                     KYC_Status: response.data.KYC_Status
                 })
             } catch (error) {
@@ -36,18 +36,35 @@ const Dashboard = () => {
         fetchUserData();
     }, []);
 
-    useEffect(() => {
-        const fetchReturnsData = async () => {
-            try {
-                const response = await instance.get("/api/v1/getReturns");
-                setTotalReturns(response.data.data.totalReturns); // Set total returns
-            } catch (error) {
-                console.error("Error fetching returns data:", error);
-            }
-        };
 
-        fetchReturnsData();
+    useEffect(() => {
+      const fetchDepositHistory = async () => {
+        try {
+          const response = await instance.get("/api/v1/deposit/getApprovedDepositRequests");
+        //   console.log(response.data.Investment)
+          setTotalInvestment(response.data.Investment);
+        } catch (error) {
+          console.error("Error fetching deposit history:", error);
+        //   setError("Error fetching deposit history");
+        } finally {
+        }
+      };
+  
+      const fetchReturnsData = async () => {
+        try {
+          const response = await instance.get("/api/v1/getReturns");
+          setTotalReturns(response.data.data.totalReturns); // Set total returns
+        } catch (error) {
+          console.error("Error fetching returns data:", error);
+        //   setError("Error fetching returns data");
+        } finally {
+        }
+      };
+  
+      fetchDepositHistory();
+      fetchReturnsData();
     }, []);
+  
     return (
         <Container fluid className="p-4">
             {/* Header Section */}
@@ -73,7 +90,7 @@ const Dashboard = () => {
                 <Col md={4} className="text-center">
                     <div className="p-3 border rounded bg-light">
                         <p><strong>User Account:</strong>  {userData.AccountID}</p>
-                        <p><strong>Balance:</strong> ₹{userData.amount.toLocaleString()}</p>
+                        <p><strong>Total Investment:</strong> ₹{totalInvestment.toLocaleString()}</p>
                         <p><strong>Total Returns:</strong> ₹{totalReturns || 0} </p>
                     </div>
                 </Col>

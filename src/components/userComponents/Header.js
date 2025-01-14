@@ -104,12 +104,8 @@ const Header = ({ page }) => {
                                             </h5>
                                             <div className="align-items-center text-center">
                                                 <div className="mb-2 d-flex justify-content-center align-items-center">
-                                                    <strong className="me-2">Live Account:</strong>
+                                                    <strong className="me-2">Account ID:</strong>
                                                     <p className="mb-0">{userData.AccountID}</p>
-                                                </div>
-                                                <div className="mb-3 d-flex justify-content-center align-items-center">
-                                                    <strong className="me-2">Balance:</strong>
-                                                    <p className="mb-0">₹{userData.amount.toLocaleString()}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -119,7 +115,7 @@ const Header = ({ page }) => {
                                                 style={{ margin: "10px", cursor: "pointer" }}
                                                 onClick={() => navigate("/dashboard")}
                                             >
-                                                <FaHome size={22} color="#4caf50" />
+                                                <FaHome size={22} color="#ffd700" />
                                                 <p style={{ fontSize: "10px", marginTop: "5px" }}>Dashboard</p>
                                             </div>
                                             <div
@@ -127,7 +123,7 @@ const Header = ({ page }) => {
                                                 style={{ margin: "10px", cursor: "pointer" }}
                                                 onClick={() => navigate("/tradingwidget")}
                                             >
-                                                <GoGraph size={22} color="#4caf50" />
+                                                <GoGraph size={22} color="#ffd700" />
                                                 <p style={{ fontSize: "10px", marginTop: "5px" }}>Graph</p>
                                             </div>
                                             <div
@@ -135,7 +131,7 @@ const Header = ({ page }) => {
                                                 style={{ margin: "10px", cursor: "pointer" }}
                                                 onClick={() => navigate("/history")}
                                             >
-                                                <FaHistory size={22} color="#4caf50" />
+                                                <FaHistory size={22} color="#ffd700" />
                                                 <p style={{ fontSize: "10px", marginTop: "5px" }}>History</p>
                                             </div>
                                             <div
@@ -143,7 +139,7 @@ const Header = ({ page }) => {
                                                 style={{ margin: "10px", cursor: "pointer" }}
                                                 onClick={() => navigate("/bank")}
                                             >
-                                                <FaDollarSign size={22} color="#4caf50" />
+                                                <FaDollarSign size={22} color="#ffd700" />
                                                 <p style={{ fontSize: "10px", marginTop: "5px" }}>Funds</p>
                                             </div>
                                             <div
@@ -151,7 +147,7 @@ const Header = ({ page }) => {
                                                 style={{ margin: "10px", cursor: "pointer" }}
                                                 onClick={() => navigate("/profile")}
                                             >
-                                                <FaUser size={22} color="#2196f3" />
+                                                <FaUser size={22} color="#ffd700" />
                                                 <p style={{ fontSize: "10px", marginTop: "5px" }}>Settings</p>
                                             </div>
                                         </div>

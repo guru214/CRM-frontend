@@ -7,6 +7,7 @@ const OrderHistoryPage = () => {
   const [depositHistory, setDepositHistory] = useState([]);
   const [returnsData, setReturnsData] = useState([]);
   const [totalReturns, setTotalReturns] = useState(null); // State for total returns
+  const [totalInvestment, setTotalInvestment] = useState(null);
   const [loadingDeposits, setLoadingDeposits] = useState(false);
   const [loadingReturns, setLoadingReturns] = useState(false);
   const [error, setError] = useState(null);
@@ -18,7 +19,8 @@ const OrderHistoryPage = () => {
       setLoadingDeposits(true);
       try {
         const response = await instance.get("/api/v1/deposit/getApprovedDepositRequests");
-        setDepositHistory(response.data);
+        setDepositHistory(response.data.deposits);
+        setTotalInvestment(response.data.Investment);
       } catch (error) {
         console.error("Error fetching deposit history:", error);
         setError("Error fetching deposit history");
@@ -115,6 +117,7 @@ const zoomImageStyle = {
               <Button variant="primary">Get started</Button>
             </div>
           ) : (
+           <div> <h5 className='mt-5' ><strong>Total Investment:</strong> ₹{totalInvestment.toLocaleString()}</h5>
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
@@ -128,7 +131,7 @@ const zoomImageStyle = {
                 {depositHistory.map((deposit, index) => (
                   <tr key={index}>
                     <td>{deposit.deposit_mode}</td>
-                    <td>₹{deposit.amount}</td>
+                    <td>₹{deposit.amount.toLocaleString()}</td>
                     <td>{deposit.status}</td>
                     <td>
                       <img src={`data:image/png;base64,${deposit.image_proof}`} alt="proof" width="50" height="50" onClick={() => openModal(deposit.image_proof)}  />
@@ -150,6 +153,7 @@ const zoomImageStyle = {
         </div>
       )}
             </Table>
+            </div>
           )}
         </Tab>
 

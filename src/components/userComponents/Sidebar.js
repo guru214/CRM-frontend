@@ -10,7 +10,8 @@ import img from "../Sign&Regs/image.png";
 
 const Sidebar = () => {
   const menuItems = [
-    { icon: <FaHome size={28} />, path: "/dashboard", isHome: true },
+    { icon: <FaHome color="black" />, path: "/dashboard", isHome: true },
+    { icon: <FaHome size={28} />, path: "/dashboard"},
     { icon: <GoGraph size={28} />, path: "/tradingwidget" },
     { icon: <FaHistory size={28} />, path: "/history" },
     { icon: <FaDollarSign size={28} />, path: "/bank" },
@@ -23,7 +24,7 @@ const Sidebar = () => {
     AccountID: "",
     amount: "",
   });
-
+ 
   const fetchUserData = async () => {
     try {
       const response = await instance.get("/api/v1/auth/profile");
