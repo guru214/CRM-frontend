@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { updateKYC } from '../../services/apiService';
 import instance from '../../services/endpoint';
 import { toast } from 'react-toastify';
+import { Pagination } from 'react-bootstrap';
 
 const KYCUpdates = () => {
   const [users, setUsers] = useState([]);
@@ -9,6 +10,17 @@ const KYCUpdates = () => {
   const [error, setError] = useState(null);
   const [modalImage, setModalImage] = useState(null); // State to manage modal image
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Number of items per page
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = users.slice(startIndex, startIndex + itemsPerPage);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,13 +30,13 @@ const KYCUpdates = () => {
           instance.get('/api/v1/auth/getUsersAndAdmins'),
           instance.get('/api/v1/userProof/listProofs'),
         ]);
-  
+
         // console.log('Users Response:', usersResponse.data);
         // console.log('Proofs Response:', proofsResponse.data);
-  
+
         const usersData = usersResponse.data || [];
         const proofsData = proofsResponse.data?.proofs || [];
-  
+
         // Merge data based on AccountID
         const mergedData = usersData.map((user) => {
           const proof = proofsData.find((p) => p.AccountID === user.AccountID);
@@ -34,17 +46,17 @@ const KYCUpdates = () => {
             ExtractedDetails: proof?.ExtractedDetails || null, // Add extracted details if available
           };
         });
-  
+
         setUsers(mergedData); // Set the merged data to state
       } catch (error) {
         console.error('Error fetching data:', error);
         setError('Error fetching users and proofs.');
       }
     };
-  
+
     fetchData();
   }, []);
-  
+
 
   const handleKYCUpdate = async (accountID, updatedStatus) => {
     if (!updatedStatus) {
@@ -106,7 +118,7 @@ const KYCUpdates = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+          {currentItems.map((user) => (
             <tr key={user.AccountID}>
               <td>{user.AccountID}</td>
               <td>{user.Email}</td>
@@ -152,8 +164,23 @@ const KYCUpdates = () => {
           ))}
         </tbody>
       </table>
-       {/* Modal for displaying the image */}
-       {isModalOpen && (
+
+      <div className="d-flex justify-content-center mt-3">
+        <Pagination>
+          {[...Array(totalPages)].map((_, pageIndex) => (
+            <Pagination.Item
+              key={pageIndex}
+              active={currentPage === pageIndex + 1}
+              onClick={() => handlePageChange(pageIndex + 1)}
+            >
+              {pageIndex + 1}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      </div>
+
+      {/* Modal for displaying the image */}
+      {isModalOpen && (
         <div style={modalStyles.overlay}>
           <div style={modalStyles.modal}>
             <button style={modalStyles.closeButton} onClick={closeModal}>x</button>

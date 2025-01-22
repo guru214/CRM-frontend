@@ -13,6 +13,8 @@ const OrderHistoryPage = () => {
   const [error, setError] = useState(null);
   const [modalImage, setModalImage] = useState(null); // State to manage modal image
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Number of items per page
 
   useEffect(() => {
     const fetchDepositHistory = async () => {
@@ -58,47 +60,63 @@ const OrderHistoryPage = () => {
     setModalImage(null); // Clear the image source
   };
 
-  
-// Modal styles
-const modalStyles = {
-  overlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-  modal: {
-    position: 'relative',
-    maxWidth: '90%',
-    maxHeight: '90%',
-    backgroundColor: 'white',
-    padding: '20px',
-    borderRadius: '8px',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    padding: '5px 10px',
-    backgroundColor: 'red',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-};
 
-// Add zoom effect styles
-const zoomImageStyle = {
-  transition: 'transform 0.3s ease', // Smooth zoom transition
-};
+  // Modal styles
+  const modalStyles = {
+    overlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000,
+    },
+    modal: {
+      position: 'relative',
+      maxWidth: '90%',
+      maxHeight: '90%',
+      backgroundColor: 'white',
+      padding: '20px',
+      borderRadius: '8px',
+      boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
+    },
+    closeButton: {
+      position: 'absolute',
+      top: '10px',
+      right: '10px',
+      padding: '5px 10px',
+      backgroundColor: 'red',
+      color: 'white',
+      border: 'none',
+      borderRadius: '5px',
+      cursor: 'pointer',
+    },
+  };
+
+  // Add zoom effect styles
+  const zoomImageStyle = {
+    transition: 'transform 0.3s ease', // Smooth zoom transition
+  };
+
+  const totalPages = Math.ceil(depositHistory.length / itemsPerPage);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = depositHistory.slice(startIndex, startIndex + itemsPerPage);
+
+  const totalReturnPages = Math.ceil(returnsData.length / itemsPerPage);
+  const handleReturnPageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const startReturnIndex = (currentPage - 1) * itemsPerPage;
+  const currentReturnItems = returnsData.slice(startReturnIndex, startReturnIndex + itemsPerPage);
 
   return (
     <Container fluid className="mt-4">
@@ -117,42 +135,70 @@ const zoomImageStyle = {
               <Button variant="primary">Get started</Button>
             </div>
           ) : (
-           <div> <h5 className='mt-5' ><strong>Total Investment:</strong> ₹{totalInvestment.toLocaleString()}</h5>
-            <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th>Deposit Mode</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Proof</th>
-                </tr>
-              </thead>
-              <tbody>
-                {depositHistory.map((deposit, index) => (
-                  <tr key={index}>
-                    <td>{deposit.deposit_mode}</td>
-                    <td>₹{deposit.amount.toLocaleString()}</td>
-                    <td>{deposit.status}</td>
-                    <td>
-                      <img src={`data:image/png;base64,${deposit.image_proof}`} alt="proof" width="50" height="50" onClick={() => openModal(deposit.image_proof)}  />
-                    </td>
+            <div>
+              <h5 className="mt-5">
+                <strong>Total Investment:</strong> ₹{totalInvestment.toLocaleString()}
+              </h5>
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>Deposit Mode</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Proof</th>
                   </tr>
-                ))}
-              </tbody>
-               {/* Modal for displaying the image */}
-       {isModalOpen && (
-        <div style={modalStyles.overlay}>
-          <div style={modalStyles.modal}>
-            <button style={modalStyles.closeButton} onClick={closeModal}>x</button>
-            <img
-              src={`data:image/jpeg;base64,${modalImage}`}
-              alt="Modal Image"
-              style={{ width: '100%', height: 'auto' }}
-            />
-          </div>
-        </div>
-      )}
-            </Table>
+                </thead>
+                <tbody>
+                  {currentItems.map((deposit, index) => (
+                    <tr key={index}>
+                      <td>{deposit.deposit_mode}</td>
+                      <td>₹{deposit.amount.toLocaleString()}</td>
+                      <td>
+                        <span
+                          className={`badge ${deposit.status === 'Approved'
+                            ? 'bg-success'
+                            : deposit.status === 'Pending'
+                              ? 'bg-warning text-dark'
+                              : 'bg-danger'
+                            }`}
+                        >
+                          {deposit.status}
+                        </span>
+                      </td>
+                      <td>
+                        <img
+                          src={`data:image/png;base64,${deposit.image_proof}`}
+                          alt="proof"
+                          width="50"
+                          height="50"
+                          onClick={() => openModal(deposit.image_proof)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+
+              {/* Pagination Controls */}
+              <div className="d-flex justify-content-center mt-3">
+                <nav>
+                  <ul className="pagination">
+                    {[...Array(totalPages)].map((_, pageIndex) => (
+                      <li
+                        key={pageIndex}
+                        className={`page-item ${currentPage === pageIndex + 1 ? 'active' : ''}`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(pageIndex + 1)}
+                        >
+                          {pageIndex + 1}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
             </div>
           )}
         </Tab>
@@ -188,7 +234,7 @@ const zoomImageStyle = {
                   </tr>
                 </thead>
                 <tbody>
-                  {returnsData.map((returnData, index) => (
+                  {currentReturnItems.map((returnData, index) => (
                     <tr key={index}>
                       <td>{new Date(returnData.date).toLocaleDateString()}</td>
                       <td>₹{returnData.returnAmount}</td>
@@ -197,6 +243,26 @@ const zoomImageStyle = {
                   ))}
                 </tbody>
               </Table>
+
+              <div className="d-flex justify-content-center mt-3">
+                <nav>
+                  <ul className="pagination">
+                    {[...Array(totalReturnPages)].map((_, pageIndex) => (
+                      <li
+                        key={pageIndex}
+                        className={`page-item ${currentPage === pageIndex + 1 ? 'active' : ''}`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => handleReturnPageChange(pageIndex + 1)}
+                        >
+                          {pageIndex + 1}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
             </>
           )}
         </Tab>

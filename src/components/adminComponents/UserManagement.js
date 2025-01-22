@@ -1,83 +1,14 @@
-// import React, { useEffect, useState } from 'react';
-// import { changeRole, deleteUser } from '../../services/apiService';
-// import instance from '../../services/endpoint';
-// import { toast } from 'react-toastify';
-// const UserManagement = () => {
-//   const [users, setUsers] = useState([]);
-
-//   useEffect(() => {
-//     const getUsersAndAdmins = async () => {
-//       try {
-//         const response = await instance.get("/api/v1/auth/getUsersAndAdmins");
-//         console.log(response.data)
-//         setUsers(response.data);
-//       } catch (error) {
-//         console.error("Error fetching users and admins:", error);
-//         throw error;
-//       }
-//     };
-//     getUsersAndAdmins()
-//   }, []);
-
-//   const handleRoleChange = (accountID, role) => {
-//     changeRole(accountID, role).then(() => toast.success('Role updated successfully'));
-//   };
-
-//   const handleDeleteUser = (accountID) => {
-//     deleteUser(accountID).then(() => toast.success('User deleted successfully'));
-//   };
-
-//   return (
-//     <div>
-//       <h2>User Management</h2>
-//       <table>
-//         <thead>
-//           <tr>
-//             <th>Account ID</th>
-//             <th>FullName</th>
-//             <th>Email</th>
-//             <th>IsVerified</th>
-//             <th>Role</th>
-//             <th>Balance</th>
-//             <th>Actions</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {Array.isArray(users) && users.length > 0 ? (
-//             users.map((user) => (
-//               <tr key={user.AccountID}>
-//                 <td>{user.AccountID}</td>
-//                 <td>{user.FullName}</td>
-//                 <td>{user.Email}</td>
-//                 <td>{user.isEmailVerified ? 'Verified' : 'Not Verified'}</td>
-//                 <td>{user.Role}</td>
-//                 <td>₹{user.amount}</td>
-//                 <td>
-//                   <button onClick={() => handleRoleChange(user.AccountID, 'Admin')}>Make Admin</button>
-//                   <button onClick={() => handleDeleteUser(user.AccountID)}>Delete</button>
-//                 </td>
-//               </tr>
-//             ))
-//           ) : (
-//             <tr>
-//               <td colSpan="3">No users found</td>
-//             </tr>
-//           )}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// };
-
-// export default UserManagement;
 import React, { useEffect, useState } from "react";
 import instance from "../../services/endpoint";
 import { changeRole, deleteUser } from "../../services/apiService";
 import { toast } from "react-toastify";
+import { Pagination } from "react-bootstrap"; // Import Bootstrap Pagination component
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [investments, setInvestments] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const itemsPerPage = 5; // Items per page
 
   useEffect(() => {
     const fetchUsersAndInvestments = async () => {
@@ -88,7 +19,6 @@ const UserManagement = () => {
 
         // Fetch investments
         const investmentsResponse = await instance.get("/api/v1/deposit/getAllApprovedDepositReq");
-        console.log(investmentsResponse.data)
         setInvestments(investmentsResponse.data.userInvestments);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -115,6 +45,20 @@ const UserManagement = () => {
     deleteUser(accountID).then(() => toast.success("User deleted successfully"));
   };
 
+  // Calculate total pages for users
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+
+  // Paginated data for users
+  const paginatedUsers = users.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div>
       <h2>User Management</h2>
@@ -131,8 +75,8 @@ const UserManagement = () => {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(users) && users.length > 0 ? (
-            users.map((user) => (
+          {Array.isArray(paginatedUsers) && paginatedUsers.length > 0 ? (
+            paginatedUsers.map((user) => (
               <tr key={user.AccountID}>
                 <td>{user.AccountID}</td>
                 <td>{user.FullName}</td>
@@ -155,6 +99,21 @@ const UserManagement = () => {
           )}
         </tbody>
       </table>
+
+      {/* Pagination */}
+      <div className="d-flex justify-content-center mt-3">
+        <Pagination>
+          {[...Array(totalPages)].map((_, pageIndex) => (
+            <Pagination.Item
+              key={pageIndex}
+              active={currentPage === pageIndex + 1}
+              onClick={() => handlePageChange(pageIndex + 1)}
+            >
+              {pageIndex + 1}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      </div>
     </div>
   );
 };

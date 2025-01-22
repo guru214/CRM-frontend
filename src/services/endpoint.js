@@ -2,8 +2,8 @@ import axios from 'axios';
 // import { useNavigate } from 'react-router-dom'; // For navigation to login page
 
 const instance = axios.create({
-  // baseURL: 'https://localhost:4000',
-  baseURL: 'https://crm-backend-onw8.onrender.com',
+  baseURL: 'https://localhost:4000',
+  // baseURL: 'https://crm-backend-onw8.onrender.com',
   withCredentials: true, // Ensure cookies are sent with requests
 });
 

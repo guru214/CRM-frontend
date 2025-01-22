@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Form, Button, Table } from "react-bootstrap";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Pagination, Form, Button, Table } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import instance from "../../services/endpoint";
@@ -9,45 +8,52 @@ const PaymentRequest = () => {
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Bank");
   const [withdrawHistory, setWithdrawHistory] = useState([]);
-  const [showHistory, setShowHistory] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const handleRequestPayment = async () => {
+    if (!withdrawAmount || withdrawAmount <= 0) {
+      toast.error("Please enter a valid withdrawal amount");
+      return;
+    }
+
     const payload = {
       withdraw_mode: paymentMethod,
       amount: withdrawAmount,
-      status: "Pending", // Set default status to Pending
+      status: "Pending",
     };
 
-    console.log("Request payment payload", payload);
-
     try {
-      const response = await instance.post(
-        "/api/v1/withdraw",
-        payload,
-      );
-
-      toast.success("Payment Requested Successfully");
-      console.log("Payment Requested Successfully", response);
+      const response = await instance.post("/api/v1/withdraw", payload);
+      toast.success("Payment requested successfully");
+      setWithdrawAmount("");
       fetchWithdrawHistory(); // Refresh withdraw history after successful request
     } catch (error) {
-      toast.error("Payment Request Failed");
-      console.error("Payment Request Failed", error.response?.data || error.message);
+      toast.error("Payment request failed");
+      console.error("Payment request failed:", error.response?.data || error.message);
     }
   };
 
   const fetchWithdrawHistory = async () => {
     try {
-      const response = await instance.get(
-        "/api/v1/withdraw",
-      );
+      const response = await instance.get("/api/v1/withdraw");
       setWithdrawHistory(response.data);
-      setShowHistory(true);
-      console.log("Withdraw History Fetched Successfully", response.data);
     } catch (error) {
       toast.error("Failed to fetch withdraw history");
-      console.error("Failed to fetch withdraw history", error.response?.data || error.message);
+      console.error("Failed to fetch withdraw history:", error.response?.data || error.message);
     }
   };
+
+  useEffect(() => {
+    fetchWithdrawHistory();
+  }, []);
+
+  // Pagination logic
+  const paginatedHistory = withdrawHistory.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  const totalPages = Math.ceil(withdrawHistory.length / itemsPerPage);
 
   return (
     <Container className="mt-4">
@@ -86,43 +92,67 @@ const PaymentRequest = () => {
           </Form>
         </Col>
       </Row>
-
-      <Row className="mt-4">
-        <Col className="text-center">
-          <Button variant="info" onClick={fetchWithdrawHistory}>
-            Show Withdraw History
-          </Button>
-        </Col>
-      </Row>
-
-      {showHistory && (
-        <Row className="mt-5">
-          <Col>
-            <h5 className="text-center">Payout History</h5>
-            <Table striped bordered hover className="text-center">
-              <thead>
-                <tr>
-                  <th>S.No</th>
-                  <th>Amount</th>
-                  <th>Method</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {withdrawHistory.map((withdraw, index) => (
+      <Row className="mt-5">
+        <Col>
+          <h5 className="text-center">Payout History</h5>
+          <Table striped bordered hover className="text-center">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedHistory.length > 0 ? (
+                paginatedHistory.map((withdraw, index) => (
                   <tr key={index}>
-                    <td>{index + 1}</td>
+                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td>₹{withdraw.amount}</td>
                     <td>{withdraw.withdraw_mode}</td>
-                    <td>{withdraw.status}</td> {/* Default to Pending if status is not provided */}
+                    <td>
+                      <span
+                        className={`badge ${withdraw.status === 'Approved'
+                          ? 'bg-success'
+                          : withdraw.status === 'Pending'
+                            ? 'bg-warning text-dark'
+                            : 'bg-danger'
+                          }`}
+                      >
+                        {withdraw.status}
+                      </span>
+                    </td>
                   </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4">No payout history available.</td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="d-flex justify-content-center mt-3">
+              <Pagination>
+                {[...Array(totalPages)].map((_, pageIndex) => (
+                  <Pagination.Item
+                    key={pageIndex}
+                    active={currentPage === pageIndex + 1}
+                    onClick={() => setCurrentPage(pageIndex + 1)}
+                  >
+                    {pageIndex + 1}
+                  </Pagination.Item>
                 ))}
-              </tbody>
-            </Table>
-          </Col>
-        </Row>
-      )}
+              </Pagination>
+            </div>
+          )}
+        </Col>
+      </Row>
     </Container>
   );
 };
+
 export default PaymentRequest;

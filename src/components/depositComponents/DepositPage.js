@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Form, Button, Row, Col, Table } from "react-bootstrap";
+import { Container, Form, Button, Pagination, Row, Col, Table } from "react-bootstrap";
 import instance from '../../services/endpoint.js';
 import { toast } from 'react-toastify';
 // import axios from 'axios';
@@ -11,12 +11,17 @@ const DepositPage = () => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [depositHistory, setDepositHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Number of items per page
+  const totalPages = Math.ceil(depositHistory.length / itemsPerPage);
 
   const fetchDepositHistory = async () => {
     try {
       const response = await instance.get("/api/v1/deposit")
       // console.log("resp:",response.data)
       setDepositHistory(response.data); // Assuming the API returns an array of deposit objects
+      setShowHistory(true);
     } catch (error) {
       console.error("Error fetching deposit history:", error);
     }
@@ -58,6 +63,13 @@ const DepositPage = () => {
       setIsLoading(false);
     }
   };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = depositHistory.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <Container>
@@ -121,9 +133,9 @@ const DepositPage = () => {
       )}
 
       <Container className="mt-4">
-        <h4 className="text-center">Deposit History</h4>
-        <Table striped bordered hover className="text-center">
-          <thead>
+        <h4 className="text-center text-primary">Deposit History</h4>
+        <Table striped bordered responsive className="text-center shadow-sm">
+          <thead className="bg-primary text-white">
             <tr>
               <th>S.No</th>
               <th>Mode</th>
@@ -132,13 +144,24 @@ const DepositPage = () => {
             </tr>
           </thead>
           <tbody>
-            {depositHistory.length > 0 ? (
-              depositHistory.map((deposit, index) => (
+            {currentItems.length > 0 ? (
+              currentItems.map((deposit, index) => (
                 <tr key={index}>
-                  <td>{index + 1}</td>
+                  <td>{startIndex + index + 1}</td>
                   <td>{deposit.deposit_mode}</td>
-                  <td>₹{deposit.amount}</td>
-                  <td>{deposit.status}</td>
+                  <td>₹{deposit.amount.toLocaleString()}</td>
+                  <td>
+                    <span
+                      className={`badge ${deposit.status === 'Approved'
+                          ? 'bg-success'
+                          : deposit.status === 'Pending'
+                            ? 'bg-warning text-dark'
+                            : 'bg-danger'
+                        }`}
+                    >
+                      {deposit.status}
+                    </span>
+                  </td>
                 </tr>
               ))
             ) : (
@@ -148,6 +171,21 @@ const DepositPage = () => {
             )}
           </tbody>
         </Table>
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-center mt-3">
+          <Pagination>
+            {[...Array(totalPages)].map((_, pageIndex) => (
+              <Pagination.Item
+                key={pageIndex}
+                active={currentPage === pageIndex + 1}
+                onClick={() => handlePageChange(pageIndex + 1)}
+              >
+                {pageIndex + 1}
+              </Pagination.Item>
+            ))}
+          </Pagination>
+        </div>
       </Container>
     </Container>
   );

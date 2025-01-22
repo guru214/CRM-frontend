@@ -3,6 +3,7 @@ import { changeWithdrawStatus } from '../../services/apiService';
 import instance from '../../services/endpoint';
 import { Card } from 'react-bootstrap'; // Importing Card component from react-bootstrap for styling
 import { toast } from 'react-toastify';
+import { Pagination } from 'react-bootstrap'; // Import Bootstrap Pagination component
 
 const WithdrawRequests = () => {
   const [withdrawRequests, setWithdrawRequests] = useState([]);
@@ -11,6 +12,8 @@ const WithdrawRequests = () => {
   const [statuses, setStatuses] = useState({}); // Store individual statuses
   const [users, setUsers] = useState([]);
   const [withdrawDetails, setWithdrawDetails] = useState([]); // Store withdraw details
+  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const itemsPerPage = 5; // Items per page
 
   useEffect(() => {
     const getUsersAndReturns = async () => {
@@ -111,6 +114,20 @@ const WithdrawRequests = () => {
     );
   };
 
+  // Calculate total pages for withdrawal requests
+  const totalPages = Math.ceil(withdrawRequests.length / itemsPerPage);
+
+  // Paginated data for withdraw requests
+  const paginatedWithdrawRequests = withdrawRequests.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div>
       <h2>Withdraw Requests</h2>
@@ -128,7 +145,7 @@ const WithdrawRequests = () => {
           </tr>
         </thead>
         <tbody>
-          {withdrawRequests.map((request) => (
+          {paginatedWithdrawRequests.map((request) => (
             <tr key={request._id}>
               <td>{request.AccountID}</td>
               <td>{request.withdraw_mode}</td>
@@ -167,6 +184,21 @@ const WithdrawRequests = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Pagination */}
+      <div className="d-flex justify-content-center mt-3">
+        <Pagination>
+          {[...Array(totalPages)].map((_, pageIndex) => (
+            <Pagination.Item
+              key={pageIndex}
+              active={currentPage === pageIndex + 1}
+              onClick={() => handlePageChange(pageIndex + 1)}
+            >
+              {pageIndex + 1}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      </div>
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import instance from '../../services/endpoint';
-import { changeRole, deleteUser } from '../../services/apiService';
-import { Form, Button, Dropdown, DropdownButton, Table } from 'react-bootstrap';
+import { Form, Button, Pagination, Table } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
 const UserReturnManagement = () => {
@@ -15,6 +14,9 @@ const UserReturnManagement = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [investments, setInvestments] = useState([]);
+  const [currentPageUsers, setCurrentPageUsers] = useState(1);
+  const [currentPageReturns, setCurrentPageReturns] = useState(1);
+  const itemsPerPage = 5; // Items per page for both tables
 
   useEffect(() => {
     const getUsersAndReturns = async () => {
@@ -30,21 +32,21 @@ const UserReturnManagement = () => {
     getUsersAndReturns();
   }, []);
 
-  useEffect(() => {
-    if (selectedUser) {
-      const fetchReturns = async () => {
-        try {
-          const response = await instance.get(`/api/v1/listReturns`);
-          setReturns(response.data.data);
-          console.log("returns", response.data.data[0])
-        } catch (err) {
-          console.error("Error fetching returns:", err);
-          setError('Failed to fetch returns');
-        }
-      };
 
-      fetchReturns();
+  const fetchReturns = async () => {
+    if (selectedUser) {
+      try {
+        const response = await instance.get(`/api/v1/listReturns`);
+        setReturns(response.data.data);
+      } catch (err) {
+        console.error("Error fetching returns:", err);
+        setError('Failed to fetch returns');
+      }
     }
+  };
+
+  useEffect(() => {
+    fetchReturns();
   }, [selectedUser]);
 
   useEffect(() => {
@@ -53,21 +55,19 @@ const UserReturnManagement = () => {
         // Fetch users
         const usersResponse = await instance.get("/api/v1/auth/getUsersAndAdmins");
         setUsers(usersResponse.data);
-  
+
         // Fetch investments
         const investmentsResponse = await instance.get("/api/v1/deposit/getAllApprovedDepositReq");
-        // console.log(investmentsResponse.data)
         setInvestments(investmentsResponse.data.userInvestments);
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Failed to fetch user or investment data.");
       }
     };
-  
+
     fetchUsersAndInvestments();
   }, []);
 
-  
   // Get total investment for a user by AccountID
   const getTotalInvestment = (accountID) => {
     const userInvestment = investments.find(
@@ -88,11 +88,43 @@ const UserReturnManagement = () => {
 
       const response = await instance.post('/api/v1/createReturns', payload);
       toast.success('Return created successfully!');
+      fetchReturns();
     } catch (err) {
       toast.error('Failed to create return');
     }
   };
+
+  // Filtered and flattened returns for selected user
   const filteredReturns = returns.filter(returnItem => returnItem.AccountID === selectedUser?.AccountID);
+  const flattenedReturns = filteredReturns.flatMap((returnItem) =>
+    returnItem.returns.map((returnDetail) => ({
+      ...returnDetail,
+      AccountID: returnItem.AccountID, // Include the AccountID for reference
+    }))
+  );
+
+  // Calculate total pages for users and returns
+  const totalUserPages = Math.ceil(users.length / itemsPerPage);
+  const totalReturnPages = Math.ceil(flattenedReturns.length / itemsPerPage);
+
+  // Paginated data for users and returns
+  const paginatedUsers = users.slice(
+    (currentPageUsers - 1) * itemsPerPage,
+    currentPageUsers * itemsPerPage
+  );
+
+  const paginatedReturns = flattenedReturns.slice(
+    (currentPageReturns - 1) * itemsPerPage,
+    currentPageReturns * itemsPerPage
+  );
+
+  const handleReturnPageChange = (page) => {
+    setCurrentPageReturns(page);
+  };
+
+  const handleUserPageChange = (page) => {
+    setCurrentPageUsers(page);
+  };
 
   return (
     <div className="container mt-5">
@@ -112,8 +144,8 @@ const UserReturnManagement = () => {
           </tr>
         </thead>
         <tbody>
-          {users.length > 0 ? (
-            users.map((user) => (
+          {paginatedUsers.length > 0 ? (
+            paginatedUsers.map((user) => (
               <tr key={user.AccountID}>
                 <td>{user.AccountID}</td>
                 <td>{user.Email}</td>
@@ -135,6 +167,19 @@ const UserReturnManagement = () => {
           )}
         </tbody>
       </Table>
+      <div className="d-flex justify-content-center mt-3">
+        <Pagination>
+          {[...Array(totalUserPages)].map((_, pageIndex) => (
+            <Pagination.Item
+              key={pageIndex}
+              active={currentPageUsers === pageIndex + 1}
+              onClick={() => handleUserPageChange(pageIndex + 1)}
+            >
+              {pageIndex + 1}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      </div>
 
       {/* Return Table and Creation Form */}
       {selectedUser && (
@@ -151,21 +196,32 @@ const UserReturnManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredReturns.length > 0 ? (
-                filteredReturns.map((returnItem) =>
-                  returnItem.returns.map((returnItemDetail) => (
-                    <tr key={returnItemDetail._id}>
-                      <td>{new Date(returnItemDetail.date).toLocaleDateString()}</td>
-                      <td>₹{returnItemDetail.returnAmount}</td>
-                      <td>{returnItemDetail.returnPercentage}%</td>
-                    </tr>
-                  ))
-                )
+              {paginatedReturns.length > 0 ? (
+                paginatedReturns.map((returnItem) => (
+                  <tr key={returnItem._id}>
+                    <td>{new Date(returnItem.date).toLocaleDateString()}</td>
+                    <td>₹{returnItem.returnAmount}</td>
+                    <td>{returnItem.returnPercentage}%</td>
+                  </tr>
+                ))
               ) : (
                 <tr><td colSpan="3">No returns available</td></tr>
               )}
             </tbody>
           </Table>
+          <div className="d-flex justify-content-center mt-3">
+            <Pagination>
+              {[...Array(totalReturnPages)].map((_, pageIndex) => (
+                <Pagination.Item
+                  key={pageIndex}
+                  active={currentPageReturns === pageIndex + 1}
+                  onClick={() => handleReturnPageChange(pageIndex + 1)}
+                >
+                  {pageIndex + 1}
+                </Pagination.Item>
+              ))}
+            </Pagination>
+          </div>
 
           {/* Return Creation Form */}
           <Form onSubmit={handleSubmit} className="mt-4">
@@ -217,9 +273,8 @@ const UserReturnManagement = () => {
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {success && <p style={{ color: 'green' }}>{success}</p>}
         </div>
-      )
-      }
-    </div >
+      )}
+    </div>
   );
 };
 

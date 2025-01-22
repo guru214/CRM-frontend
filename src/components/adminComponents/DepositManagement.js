@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { changeDepositStatus } from '../../services/apiService';
+import { Pagination } from 'react-bootstrap';
 import instance from '../../services/endpoint';
 import { toast } from 'react-toastify';
 
@@ -9,6 +10,9 @@ const DepositRequests = () => {
   const [error, setError] = useState(null);
   const [modalImage, setModalImage] = useState(null); // State to manage modal image
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Number of items per page
+  const totalPages = Math.ceil(depositRequests.length / itemsPerPage);
 
   useEffect(() => {
     const fetchDepositRequests = async () => {
@@ -58,6 +62,14 @@ const DepositRequests = () => {
     setModalImage(null); // Clear the image source
   };
 
+    
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = depositRequests.slice(startIndex, startIndex + itemsPerPage);
+
   return (
     <div>
       <h2>Deposit Requests</h2>
@@ -74,7 +86,7 @@ const DepositRequests = () => {
           </tr>
         </thead>
         <tbody>
-          {depositRequests.map((request) => (
+          {currentItems.map((request) => (
             <tr key={request._id}>
               <td>{request.AccountID}</td>
               <td>{request.deposit_mode}</td>
@@ -113,6 +125,19 @@ const DepositRequests = () => {
           ))}
         </tbody>
       </table>
+      <div className="d-flex justify-content-center mt-3">
+          <Pagination>
+            {[...Array(totalPages)].map((_, pageIndex) => (
+              <Pagination.Item
+                key={pageIndex}
+                active={currentPage === pageIndex + 1}
+                onClick={() => handlePageChange(pageIndex + 1)}
+              >
+                {pageIndex + 1}
+              </Pagination.Item>
+            ))}
+          </Pagination>
+        </div>
        {/* Modal for displaying the image */}
        {isModalOpen && (
         <div style={modalStyles.overlay}>
