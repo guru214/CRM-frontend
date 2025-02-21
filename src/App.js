@@ -1,6 +1,8 @@
-import React from "react";
-import { BrowserRouter, Routes, Navigate, Route } from "react-router-dom";
-import { Container, Row, Col } from "react-bootstrap"; // React-Bootstrap components
+ import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"; 
+import { Container } from "react-bootstrap"; // React-Bootstrap component
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify styles
 
 // Components
 import Sidebar from "./components/userComponents/Sidebar.js";
@@ -10,83 +12,52 @@ import ReferAndEarn from "./components/userComponents/Referal.js";
 import Positions from "./components/userComponents/Position.js";
 import ProfilePage from "./components/userComponents/Profile.js";
 import PammTable from "./components/userComponents/PammTable.js";
-import TradingSignals from "./components/userComponents/TradingSignals.js";
-import DepositWithdraw from "./components/userComponents/Banking.js";
+import TradingSignals from "./components/userComponents/TradingSignals.js"; 
+import DepositWithdraw from "./components/userComponents/Banking.js";       
 import APIAccessPage from "./components/userComponents/API.js";
-import OrderHistoryPage from "./components/userComponents/History.js";
+import OrderHistoryPage from "./components/userComponents/History.js";      
 import DashboardPage from "./components/userComponents/Home.js";
 import SignInForm from "./components/userComponents/Login.js";
 import RegisterForm from "./components/userComponents/Register.js";
-import ForgotPassword from "./components/userComponents/forgetpassword.js";
-import TradeGraph from "./components/userComponents/TradingViewWidget.js";
+import ForgotPassword from "./components/userComponents/forgetpassword.js"; 
+import TradeGraph from "./components/userComponents/TradingViewWidget.js";  
 import Testing from "./components/userComponents/testing.js";
 import VerifyEmail from './components/userComponents/VerifyEmail.js';
-import ProtectedRoute from "./services/ProtectedRoutes.js";
-import PublicRoute from "./services/PublicRoutes.js";
 import EmailVerify from "./components/userComponents/EmailVerify.js";
 import AdminDashboard from "./components/adminComponents/Dashboard.js";
-import { ToastContainer } from "react-toastify";
-import Header from "./components/userComponents/Header.js";
-import "react-toastify/dist/ReactToastify.css"; // Import the CSS for toasts
-import ResetPassword from "./components/userComponents/ResetPassword.js";
+import ProtectedRoute from "./services/ProtectedRoutes.js";
+import PublicRoute from "./services/PublicRoutes.js";
 import ProtectedAdminRoute from "./services/ProtectedAdminRoutes.js";
-import Unauthorized from "./components/userComponents/Unauthorized.js";
-// import CookieHandler from "./components/CookieHandler.js";
+// Removed unused 'Unauthorized' import
+import Header from "./components/userComponents/Header.js";
+
+// Protected Layout Component
 const ProtectedLayout = ({ children }) => (
   <Container fluid className="p-0">
-     
-     <Header page="dashboard" />
- {/* <Sidebar/> */}
- <main style={{ display: "flex" }}>
-   <div>
-     <Sidebar />
-   </div>
-         
-         <div style={{ flex: 1 }}>{children}</div>
-       </main>
-   </Container>
- );
- 
-// const ProtectedLayout = ({ children }) => (
-//   <Container fluid className="p-0">
-//     <Row className="g-0">
-//       {/* Sidebar */}
-//       <Col
-//         xs={12}
-//         md={3}
-//         lg={2}
-//         className="bg-light min-vh-100 p-0"
-//         style={{ maxWidth: "250px" }}
-//       >
-//         <Sidebar />
-//       </Col>
-//       {/* Main Content */}
-//       <Col xs={12} md={9} lg={10} className="p-4">
-//         {children}
-//       </Col>
-//     </Row>
-//   </Container>
-// );
+    <Header page="dashboard" />
+    <main style={{ display: "flex" }}>
+      <Sidebar />
+      <div style={{ flex: 1 }}>{children}</div>
+    </main>
+  </Container>
+);
 
 const App = () => {
   return (
     <BrowserRouter>
       <ToastContainer />
       <Routes>
-        <Route path="/unauthorized" element={<Unauthorized />} />
-
         {/* Public Routes */}
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<SignInForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/resetPassword/:resetToken" element={<ResetPassword />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
-          <Route path="/verifyEmail/:emailVerifyToken" element={<EmailVerify />} />
+          <Route path="/email-verify" element={<EmailVerify />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Route>
 
-        {/* Private Routes */}
+        {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
           <Route path="/user-table" element={<ProtectedLayout><UserTable /></ProtectedLayout>} />
@@ -104,15 +75,14 @@ const App = () => {
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Route>
 
-        <Route element={<ProtectedAdminRoute />}> 
-          <Route path="/adminDashboard" element={<ProtectedLayout><AdminDashboard /></ProtectedLayout>} /> 
+        {/* Admin Protected Routes */}
+        <Route element={<ProtectedAdminRoute />}>
+          <Route path="/adminDashboard" element={<ProtectedLayout><AdminDashboard /></ProtectedLayout>} />
           <Route path="*" element={<Navigate to="/unauthorized" />} />
-      </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );
 };
 
 export default App;
-
-    // "start": "cross-env HTTPS=true SSL_CRT_FILE=certs/localhost.pem SSL_KEY_FILE=certs/localhost-key.pem react-scripts start",
