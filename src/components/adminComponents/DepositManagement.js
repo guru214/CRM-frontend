@@ -62,6 +62,7 @@ const DepositRequests = () => {
     setModalImage(null); // Clear the image source
   };
 
+    
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -89,19 +90,17 @@ const DepositRequests = () => {
             <tr key={request._id}>
               <td>{request.AccountID}</td>
               <td>{request.deposit_mode}</td>
-              <td>
-                {request.image_proof ? (
+              <td> {request.image_proof ? (
                   <img
                     src={`data:image/jpeg;base64,${request.image_proof}`}
-                    alt="Deposit Proof"
+                    alt="Proof"
                     className="zoom-image" // Add class for zoom effect
-                    style={{ ...zoomImageStyle, maxWidth: '100px', maxHeight: '100px', cursor: 'pointer' }} // Apply zoom effect styles
+                    style={{ maxWidth: '100px', maxHeight: '100px', cursor: 'pointer' }}
                     onClick={() => openModal(request.image_proof)} // Open modal on click
                   />
                 ) : (
                   'No Proof Uploaded'
-                )}
-              </td>
+                )}</td>
               <td>₹{request.amount}</td>
               <td>{request.status}</td>
               <td>
@@ -127,21 +126,20 @@ const DepositRequests = () => {
         </tbody>
       </table>
       <div className="d-flex justify-content-center mt-3">
-        <Pagination>
-          {[...Array(totalPages)].map((_, pageIndex) => (
-            <Pagination.Item
-              key={pageIndex}
-              active={currentPage === pageIndex + 1}
-              onClick={() => handlePageChange(pageIndex + 1)}
-            >
-              {pageIndex + 1}
-            </Pagination.Item>
-          ))}
-        </Pagination>
-      </div>
-
-      {/* Modal for displaying the image */}
-      {isModalOpen && (
+          <Pagination>
+            {[...Array(totalPages)].map((_, pageIndex) => (
+              <Pagination.Item
+                key={pageIndex}
+                active={currentPage === pageIndex + 1}
+                onClick={() => handlePageChange(pageIndex + 1)}
+              >
+                {pageIndex + 1}
+              </Pagination.Item>
+            ))}
+          </Pagination>
+        </div>
+       {/* Modal for displaying the image */}
+       {isModalOpen && (
         <div style={modalStyles.overlay}>
           <div style={modalStyles.modal}>
             <button style={modalStyles.closeButton} onClick={closeModal}>x</button>
