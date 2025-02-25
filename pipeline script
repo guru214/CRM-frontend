@@ -1,19 +1,9 @@
   pipeline {
     agent { label 'CRM-Project' }
 
-    stages {
-        stage('Clone Repository') {
-            steps {
-                script {
-                    sh 'git clone https://github.com/guru214/CRM-frontend.git'
-                }
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 script {
-                    dir('CRM-frontend') {
                         sh 'echo "Node version:" && node -v && echo "npm version:" && npm -v'
                         sh 'npm install'
                         sh 'npm install cross-env --save-dev'
