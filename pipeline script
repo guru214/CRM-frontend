@@ -1,4 +1,4 @@
-  pipeline {
+   pipeline {
     agent { label 'CRM-Project' }
 
         stage('Install Dependencies') {
@@ -24,7 +24,6 @@
                 }
             }
         }
-    }
 
     post {
         success {
@@ -37,4 +36,3 @@
             echo 'Cleaning up after the build...'
         }
     }
-}
