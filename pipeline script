@@ -15,7 +15,7 @@
                     sh 'npm install cross-env --save-dev'
 
                     
-                    sh 'npm audit fix'
+         
 
                     
                     sh 'npm install react-scripts@latest'
