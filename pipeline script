@@ -1,15 +1,15 @@
-   pipeline {
+pipeline {
     agent { label 'CRM-Project' }
 
+    stages {
         stage('Install Dependencies') {
             steps {
                 script {
-                        sh 'echo "Node version:" && node -v && echo "npm version:" && npm -v'
-                        sh 'npm install'
-                        sh 'npm install cross-env --save-dev'
-                        sh 'npm audit fix '
-                        sh 'npm install @babel/plugin-proposal-private-property-in-object'
-                    }
+                    sh 'echo "Node version:" && node -v && echo "npm version:" && npm -v'
+                    sh 'npm install'
+                    sh 'npm install cross-env --save-dev'
+                    sh 'npm audit fix'
+                    sh 'npm install @babel/plugin-proposal-private-property-in-object'
                 }
             }
         }
@@ -24,6 +24,7 @@
                 }
             }
         }
+    }
 
     post {
         success {
@@ -36,3 +37,4 @@
             echo 'Cleaning up after the build...'
         }
     }
+}
