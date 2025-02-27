@@ -55,5 +55,6 @@
         always {
             echo 'Cleaning up after the build...'
         }
-    }
 }
+}
+
