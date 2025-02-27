@@ -1,5 +1,5 @@
  pipeline {
-    agent { label 'CRM-Project' }
+    agent { label 'CRM' }
 
     environment {
         SONARQUBE_URL = 'http://13.50.107.153:9000/'
