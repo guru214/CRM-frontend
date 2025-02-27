@@ -1,4 +1,4 @@
- pipeline {
+  pipeline {
     agent { label 'CRM' }
 
     environment {
@@ -33,18 +33,6 @@
             }
         }
 
-        stage('Build Application') {
-            steps {
-                script {
-                    dir('CRM-frontend') {
-                        echo "Starting the application..."
-                        sh 'npm start'
-                    }
-                }
-            }
-        }
-    }
-
     post {
         success {
             echo 'Build completed successfully.'
@@ -57,3 +45,4 @@
         }
     }
 }
+ }
