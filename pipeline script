@@ -4,7 +4,7 @@
     environment {
         SONARQUBE_URL = 'http://13.50.107.153:9000/'
         SONARQUBE_TOKEN = credentials('sqp_c26eb8a982a2199231d151624e7e566a57595af2') 
-        SONAR_PROJECT_KEY = 'crm-pipeline' 
+        SONAR_PROJECT_KEY = 'crm-pipeline'
     }
 
     stages {
@@ -24,10 +24,10 @@
                     
                     sh """
                         npx sonar-scanner \
-                        -Dsonar.projectKey=${crm-pipeline} \
+                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
                         -Dsonar.sources=. \
-                        -Dsonar.host.url=${http://13.50.107.153:9000/} \
-                        -Dsonar.login=${sqp_c26eb8a982a2199231d151624e7e566a57595af2}
+                        -Dsonar.host.url=${SONARQUBE_URL} \
+                        -Dsonar.login=${SONARQUBE_TOKEN}
                     """
                 }
             }
