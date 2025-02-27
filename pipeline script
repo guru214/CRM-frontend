@@ -2,9 +2,9 @@
     agent { label 'CRM-Project' }
 
     environment {
-        SONARQUBE_URL = 'http://13.50.107.153:9000/'   
-        SONARQUBE_TOKEN = credentials('sqp_c26eb8a982a2199231d151624e7e566a57595af2')    
-        SONAR_PROJECT_KEY = 'sonar.projectKey=crm-pipeline'          
+        SONARQUBE_URL = 'http://13.50.107.153:9000/'
+        SONARQUBE_TOKEN = credentials('sqp_c26eb8a982a2199231d151624e7e566a57595af2') 
+        SONAR_PROJECT_KEY = 'sonar.projectKey=crm-pipeline'
     }
 
     stages {
@@ -13,7 +13,6 @@
                 script {
                     sh 'echo "Node version:" && node -v && echo "npm version:" && npm -v'
                     sh 'npm install'
-                    
                 }
             }
         }
@@ -25,7 +24,7 @@
                     
                     sh """
                         npx sonar-scanner \
-                        -Dsonar.projectKey=${sonar.projectKey=crm-pipeline} \
+                        -Dsonar.projectKey=${sonar.projectKey=crm-pipeline } \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=${http://13.50.107.153:9000/} \
                         -Dsonar.login=${sqp_c26eb8a982a2199231d151624e7e566a57595af2}
@@ -39,7 +38,7 @@
                 script {
                     dir('CRM-frontend') {
                         echo "Starting the application..."
-                        sh 'npm start'   
+                        sh 'npm start'
                     }
                 }
             }
