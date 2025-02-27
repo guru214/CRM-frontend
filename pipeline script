@@ -1,4 +1,4 @@
-  pipeline {
+ pipeline {
     agent { label 'CRM' }
 
     environment {
@@ -32,6 +32,7 @@
                 }
             }
         }
+    }
 
     post {
         success {
@@ -45,4 +46,3 @@
         }
     }
 }
- }
